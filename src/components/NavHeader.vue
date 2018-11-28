@@ -17,13 +17,13 @@
           <div class="navbar-menu-container">
             <!--<a href="/" class="navbar-link">我的账户</a>-->
             <span class="navbar-link" v-show='loginTagFlag'>{{ userName }}</span>
-            <a href="javascript:void(0)" class="navbar-link" @click="loginModalFlag=true" v-show='!loginTagFlag'>Login</a>
+            <a href="javascript:void(0)" class="navbar-link" @click="userName='';userPwd='';loginModalFlag=true" v-show='!loginTagFlag'>Login</a>
             <a href="javascript:void(0)" class="navbar-link" @click="logout" v-show='loginTagFlag'>Logout</a>
-            <div class="navbar-cart-container">
+            <div class="navbar-cart-container" @click="showCartModal">
               <span class="navbar-cart-count"></span>
-              <a class="navbar-link navbar-cart-link" href="/#/cart">
+              <a class="navbar-link navbar-cart-link">
                 <svg class="navbar-cart-logo">
-                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#icon-cart"></use>
+                  <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../static/svg.svg#icon-cart"></use>
                 </svg>
               </a>
             </div>
@@ -39,7 +39,7 @@
             <div class="md-content">
               <div class="confirm-tips">
                 <div class="error-wrap">
-                  <span class="error error-show" v-text="errorTip"></span>
+                  <span class="error error-show" v-text="errorTip" v-show="errorTip"></span>
                 </div>
                 <ul>
                   <li class="regi_form_input">
@@ -58,7 +58,23 @@
             </div>
           </div>
         </div>
-        <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+      <div class="md-overlay" v-if="loginModalFlag" @click="loginModalFlag=false"></div>
+      <div class="md-modal modal-msg md-modal-transition" v-bind:class="{'md-show':cartModalFlag}">
+          <div class="md-modal-inner">
+            <div class="md-top">
+              <button class="md-close" @click="cartModalFlag=false">Close</button>
+            </div>
+            <div class="md-content">
+              <div class="confirm-tips">
+                <h3>您尚未登录，请登录后再查看购物车</h3>
+              </div>
+              <div class="btn-wrap">
+                <a href="javascript:;" class="btn btn--m" @click="cartModalFlag=false">确定</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div class="md-overlay" v-if="cartModalFlag" @click="cartModalFlag=false"></div>
     </header>
   </div>
 </template>
@@ -144,7 +160,8 @@ export default {
     return{
       loginTagFlag: false, //控制登录栏login/logout两标签的显示
       checkLoginFlag: false, //打开页面后检查是否已经登录的数据
-      loginModalFlag: false, //控制模态框是否显示的数据
+      loginModalFlag: false, //控制登录模态框是否显示
+      cartModalFlag: false, //控制购物车模态框是否显示
       userName:'',//用户名，用于提交和显示
       userPwd: '',//用户密码，用于提交给数据库
       errorTip: '' // 表单提交错误提示
@@ -195,6 +212,19 @@ export default {
           this.loginTagFlag=false
         }
       })
+    },
+    showCartModal(){ //点击购物车按钮
+      /**
+       * 1. 判断登录情况，根据登录情况做不同处理
+       * 2. 未登录，确认
+       * 3. 已登录，页面跳转
+       */
+      
+      if(!document.cookie) { 
+        this.cartModalFlag = true  
+      } else {
+        this.$router.push({path: '/cart'}); 
+      }
     }
   }
 }

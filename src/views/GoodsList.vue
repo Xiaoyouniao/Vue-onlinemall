@@ -53,8 +53,12 @@
     
     <div class="md-overlay" v-show="overLayFlag" @click.stop="closePop"></div>
     <nav-footer></nav-footer>
-    <modal :mdShow="mdShowFlag">
-      <h3 slot="message" v-html='mdMsg'></h3>
+    <modal :mdShow="mdShowFlag" @close="closeModal">
+      <h3 slot="message" v-html="mdMsg"></h3>
+      <div slot="btnGroup">
+        <a class="btn btn--m" @click="btnA" v-text="btna"></a>
+        <a class="btn btn--m" @click="btnB" v-text="btnb" v-if="showBtnB"></a>
+      </div>
     </modal>
   </div>
 </template>
@@ -91,12 +95,16 @@ export default {
             startPrice: 1000.00,
             endPrice: 5000.00
           }],
-          busy: true,
-          loading: false,
-          mdShow: false,
-          mdShowCart: false,
-          mdShowFlag: false, //控制模态框显示与否的变量
-          mdMsg: '' // 模态框中显示的内容（v-html绑定）
+      busy: true,
+      loading: false,
+      mdShow: false,
+      mdShowCart: false,
+      mdShowFlag: false, //控制模态框显示与否的变量
+      btna:'',
+      btnb: '',
+      showBtnB:false,
+      mdMsg: '' // 模态框中显示的内容（v-html绑定）
+      
     }
     
   },
@@ -110,20 +118,28 @@ export default {
     this.getGoodLists()
   },
   methods: {
-    filterByShow(){
+    btnA(){ // 根据不同情况显示不同的按钮A点击事件
+      if(this.btna == '确认'){
+        this.closeModal()
+      }
+    },
+    btnB(){ // 根据不同情况显示不同的按钮A点击事件
+
+    },
+    filterByShow(){ // 屏幕变窄后点击按钮出现遮罩和隐藏的价格列表
       this.filterBy = true
       this.overLayFlag = true
     },
-    closePop(){
+    closePop(){ // 屏幕变窄时关闭遮罩，隐藏价格列表
       this.filterBy = false
       this.overLayFlag = false
     },
-    setPriceFilter(option) { // 
+    setPriceFilter(option) { // 点击价格区间后关闭遮罩，改变价格列表样式，向服务器发起数据请求
       this.priceChecked = option
       this.closePop()
       this.getGoodLists()
     },
-    getGoodLists(flag){ // 获取现有商品数据
+    getGoodLists(flag){ // 根据选项获取指定商品数据
       var param = {
         page: this.page,
         pageSize: this.pageSize,
@@ -170,19 +186,30 @@ export default {
         this.busy = false;
       }, 1000); 
     },
+    closeModal(){ // 关闭模态框
+      this.mdShowFlag = false
+      this.mdMsg = ''
+      console.log(this.mdShow, this.mdMsg, this.btnGroup)
+    },
     addToCart(productId) { // 将产品添加至购物车
-      console.log(this.getCookie())
-      var param = { productId:productId }
-      axios.post('goods/addCart', param).then(res=>{
-        if (res.data.status == 0){
-          this.mdShowFlag = true
-          this.mdMsg = '<h3>加入购物车成功！</h3>'
-        }
-        var addCartTimer=setTimeout(()=>{
-          this.mdShowFlag = false
-          this.mdMsg = ''
-        },1500)
-      })
+    /**
+     * 1. 检验登录状态，拦截将商品加入购物车的请求
+     */
+      if(document.cookie) { 
+        var param = { productId:productId }
+        axios.post('goods/addCart', param).then(res=>{
+          if (res.data.status == 0){
+            this.mdShowFlag = true
+            this.mdMsg = '<h3>加入购物车成功！</h3>'
+            this.btna = '确认'
+          }
+        })
+      } else {
+        this.mdShowFlag = true
+        this.mdMsg = '<h3>您尚未登录，请登录后再选购商品！</h3>'
+        this.btna = '确认'
+      }
+      
     }
   }
 }

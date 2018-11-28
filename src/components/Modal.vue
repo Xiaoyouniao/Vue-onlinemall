@@ -10,7 +10,9 @@
               <slot name="message"></slot>
             </div>
             <div class="btn-wrap">
-              <slot name="btnGroup"></slot>
+              <slot name="btnGroup">
+                
+              </slot>
             </div>
           </div>
         </div>
