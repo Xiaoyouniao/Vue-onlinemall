@@ -10,8 +10,7 @@
       </symbol>
       <div class="navbar">
         <div class="navbar-left-container">
-          <a href="/">
-            <img class="navbar-brand-logo" src="../../static/img/logo1.png"></a>
+            <h2 class="navbar-brand-logo">阳光商城</h2>
         </div>
         <div class="navbar-right-container" style="display: flex;">
           <div class="navbar-menu-container">
@@ -20,7 +19,7 @@
             <a href="javascript:void(0)" class="navbar-link" @click="userName='';userPwd='';loginModalFlag=true" v-show='!loginTagFlag'>Login</a>
             <a href="javascript:void(0)" class="navbar-link" @click="logout" v-show='loginTagFlag'>Logout</a>
             <div class="navbar-cart-container" @click="showCartModal">
-              <span class="navbar-cart-count"></span>
+              <span class="navbar-cart-count" v-show="userName">{{ num }}</span>
               <a class="navbar-link navbar-cart-link">
                 <svg class="navbar-cart-logo">
                   <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../static/svg.svg#icon-cart"></use>
@@ -103,7 +102,11 @@
     margin-left: -20px;
   }
   .navbar-brand-logo {
-    /*width: 120px;*/
+    letter-spacing: 0.25em;
+    font-size: 30px;
+    font-weight: bold;
+    text-indent: 10px;
+    font-family: '黑体';
   }
   .header a, .footer a {
     color: #666;
@@ -167,6 +170,7 @@ export default {
       errorTip: '' // 表单提交错误提示
     }
   }, 
+  props: ["num"],
   mounted(){
     this.checkLogin() 
   },
@@ -196,6 +200,7 @@ export default {
           this.loginModalFlag = false
           this.userName = res.data.result.userName
           this.loginTagFlag = true
+          this.imlogined()
         } else {
           this.errorTip = res.data.msg
         }
@@ -210,6 +215,7 @@ export default {
         if(res.data.status==0){
           this.userName= ''
           this.loginTagFlag=false
+          this.imlogined()
         }
       })
     },
@@ -225,6 +231,9 @@ export default {
       } else {
         this.$router.push({path: '/cart'}); 
       }
+    },
+    imlogined(){
+      this.$emit('rylogined',{ userName: this.userName })
     }
   }
 }

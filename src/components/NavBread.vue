@@ -37,7 +37,3 @@
       color:#d1434a;
   }
 </style>
-
-<script>
-  
-</script>

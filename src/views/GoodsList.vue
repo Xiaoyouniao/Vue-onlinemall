@@ -189,7 +189,6 @@ export default {
     closeModal(){ // 关闭模态框
       this.mdShowFlag = false
       this.mdMsg = ''
-      console.log(this.mdShow, this.mdMsg, this.btnGroup)
     },
     addToCart(productId) { // 将产品添加至购物车
     /**
