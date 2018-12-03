@@ -122,7 +122,7 @@
                 Item total: <span class="total-price">{{ checkedPrice }}</span>
               </div>
               <div class="btn-wrap">
-                <a class="btn btn--red" href>Checkout</a>
+                <a class="btn btn--red" @click="goCheckOut">Checkout</a>
               </div>
             </div>
           </div>
@@ -132,7 +132,7 @@
 
     <nav-footer></nav-footer>
     <modal :mdShow="mdShowFlag" @close="closeModal"> 
-      <h3 slot="message">您尚未登录，请先登录！</h3>
+      <h3 slot="message" v-html="mdMessage"></h3>
       <div slot="btnGroup">
         <a class="btn btn--m" @click="closeModal">确定</a>
       </div>
@@ -156,14 +156,15 @@ export default {
       checkedPrice: 0,
       checkedCount: 0,
       checkAll: false,
-      mdShowFlag: false
-      
+      mdShowFlag: false,
+      mdMessage: ''
     }
   },
   mounted(){
     if(document.cookie) {
       this.getCartList() 
     }else{
+      this.mdMessage = '您尚未登录，请先登录！'
       this.mdShowFlag = true
     }
   },
@@ -250,6 +251,14 @@ export default {
         }else {
           this.$router.push({path: '/'})
         }
+      },
+      goCheckOut(){
+        if(this.checkedList.length==0){
+          this.mdMessage = '您目前未选择任何商品！'
+          this.mdShowFlag = true
+          return
+        }
+        this.$router.push({path: '/Address'})
       }
   },
   components: {

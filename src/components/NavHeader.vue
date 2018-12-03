@@ -19,7 +19,7 @@
             <a href="javascript:void(0)" class="navbar-link" @click="userName='';userPwd='';loginModalFlag=true" v-show='!loginTagFlag'>Login</a>
             <a href="javascript:void(0)" class="navbar-link" @click="logout" v-show='loginTagFlag'>Logout</a>
             <div class="navbar-cart-container" @click="showCartModal">
-              <span class="navbar-cart-count" v-show="userName">{{ num }}</span>
+              <span class="navbar-cart-count" v-show="userName">{{ cartCount }}</span>
               <a class="navbar-link navbar-cart-link">
                 <svg class="navbar-cart-logo">
                   <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="../../static/svg.svg#icon-cart"></use>
@@ -167,7 +167,8 @@ export default {
       cartModalFlag: false, //控制购物车模态框是否显示
       userName:'',//用户名，用于提交和显示
       userPwd: '',//用户密码，用于提交给数据库
-      errorTip: '' // 表单提交错误提示
+      errorTip: '', // 表单提交错误提示
+      cartCount: 0
     }
   }, 
   props: ["num"],
@@ -182,6 +183,10 @@ export default {
         }else{
           this.userName = res.data.result
           this.loginTagFlag = true
+          
+          axios.get('users/getCartCount').then(res=>{
+            this.cartCount = res.data.result
+          })
         }
       })
     },

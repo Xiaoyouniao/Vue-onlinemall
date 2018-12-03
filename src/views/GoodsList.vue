@@ -103,10 +103,9 @@ export default {
       btna:'',
       btnb: '',
       showBtnB:false,
-      mdMsg: '' // 模态框中显示的内容（v-html绑定）
-      
+      mdMsg: '' ,// 模态框中显示的内容（v-html绑定）
+      cartCount: 0
     }
-    
   },
   components:{
     NavHeader,
@@ -168,8 +167,6 @@ export default {
           console.log('2')
           this.goodsLists = []
         }
-      }).catch(err=>{
-        console.log(err)
       })
     },
     sortPrice(){ // 商品价格排序，关闭遮罩
